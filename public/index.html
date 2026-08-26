@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Expedição Brasil - plataforma de aprendizagem e jogos de matemática e cultura brasileira." />
+    <title>Expedição Brasil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="app-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">🇧🇷</div>
+          <div>
+            <p class="eyebrow">Trilha de aprendizado</p>
+            <h1>Expedição Brasil</h1>
+          </div>
+        </div>
+        <nav class="top-actions">
+          <button id="dashboardBtn" class="ghost-btn hidden">Dashboard</button>
+          <button id="logoutBtn" class="primary-btn hidden">Sair</button>
+        </nav>
+      </header>
+
+      <main>
+        <section id="authScreen" class="auth-shell">
+          <div class="hero-panel">
+            <div class="hero-glow"></div>
+            <p class="eyebrow light">Viaje por sotaques, gírias, cultura e matemática</p>
+            <h2>Desvende o Brasil em cada missão.</h2>
+            <ul class="hero-list">
+              <li>📚 Trilhas de aprendizagem guiadas</li>
+              <li>🎮 4 jogos interativos de matemática e cultura</li>
+              <li>🏆 Medalhas, ranking e evolução pessoal</li>
+            </ul>
+          </div>
+
+          <div class="auth-card">
+            <div class="tab-controls">
+              <button class="tab-btn active" data-tab="login">Entrar</button>
+              <button class="tab-btn" data-tab="register">Cadastrar</button>
+            </div>
+
+            <form id="loginForm" class="auth-form active">
+              <div class="field">
+                <label for="loginEmail">E-mail</label>
+                <input id="loginEmail" type="email" placeholder="aluno@expedicaobrasil.com" required />
+              </div>
+              <div class="field">
+                <label for="loginPassword">Senha</label>
+                <input id="loginPassword" type="password" placeholder="Sua senha" required />
+              </div>
+              <button type="submit" class="primary-btn wide">Entrar na trilha</button>
+            </form>
+
+            <form id="registerForm" class="auth-form">
+              <div class="field">
+                <label for="registerName">Nome</label>
+                <input id="registerName" type="text" placeholder="Seu nome" required />
+              </div>
+              <div class="field">
+                <label for="registerEmail">E-mail</label>
+                <input id="registerEmail" type="email" placeholder="seuemail@email.com" required />
+              </div>
+              <div class="field">
+                <label for="registerPassword">Senha</label>
+                <input id="registerPassword" type="password" placeholder="Crie uma senha" required />
+              </div>
+              <button type="submit" class="primary-btn wide">Criar conta</button>
+            </form>
+            <p id="authMessage" class="message-box hidden"></p>
+          </div>
+        </section>
+
+        <section id="dashboardScreen" class="dashboard-shell hidden">
+          <div class="dashboard-top">
+            <div>
+              <p class="eyebrow">Perfil</p>
+              <h2 id="welcomeUser">Bem-vindo(a), explorador(a)!</h2>
+            </div>
+            <div class="level-pill" id="levelPill">Nível 1</div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card accent-yellow">
+              <span>🏆 Pontuação</span>
+              <strong id="totalScore">0</strong>
+            </article>
+            <article class="stat-card accent-blue">
+              <span>🎯 Precisão</span>
+              <strong id="accuracyScore">0%</strong>
+            </article>
+            <article class="stat-card accent-green">
+              <span>🧩 Jogos</span>
+              <strong id="attemptsCount">0</strong>
+            </article>
+            <article class="stat-card accent-purple">
+              <span>🏅 Medalhas</span>
+              <strong id="medalsCount">0</strong>
+            </article>
+          </div>
+
+          <div class="main-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h3>Trilha de aprendizagem</h3>
+                <span>Mapa do Brasil</span>
+              </div>
+              <div id="gamesList" class="game-list"></div>
+            </section>
+
+            <aside class="panel">
+              <div class="panel-header">
+                <h3>Ranking</h3>
+                <span>Top 10</span>
+              </div>
+              <ol id="leaderboardList" class="leaderboard"></ol>
+            </aside>
+          </div>
+
+          <div class="lower-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h3>Medalhas conquistadas</h3>
+                <span>Conquistas</span>
+              </div>
+              <div id="badgesList" class="badge-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h3>Histórico</h3>
+                <span>Últimas aventuras</span>
+              </div>
+              <div id="historyList" class="history-list"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="gameModal" class="modal hidden" aria-modal="true" role="dialog">
+      <div class="modal-content">
+        <button class="close-btn" id="closeGameModal" aria-label="Fechar jogo">✕</button>
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Mini jogo</p>
+            <h3 id="gameModalTitle">Jogo</h3>
+          </div>
+          <span id="gameModalMeta" class="tag"></span>
+        </div>
+        <div id="gameContent" class="game-content"></div>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
