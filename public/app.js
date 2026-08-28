@@ -26,6 +26,8 @@ const gameModal = document.getElementById('gameModal');
 const gameModalTitle = document.getElementById('gameModalTitle');
 const gameModalMeta = document.getElementById('gameModalMeta');
 const gameContent = document.getElementById('gameContent');
+const ttsBtn = document.getElementById('ttsBtn');
+let _ttsUtterance = null;
 
 const gameDefinitions = {
   ditados: {
@@ -158,6 +160,65 @@ function toggleAuthViews(isAuthenticated) {
   dashboardScreen.classList.toggle('hidden', !isAuthenticated);
   dashboardBtn.classList.toggle('hidden', !isAuthenticated);
   logoutBtn.classList.toggle('hidden', !isAuthenticated);
+}
+
+function _getTextToSpeak() {
+  const sel = window.getSelection().toString().trim();
+  if (sel) return sel;
+
+  const visible = document.querySelector('main');
+  if (!visible) return '';
+  // prefer focused or important elements
+  const modalVisible = !gameModal.classList.contains('hidden');
+  if (modalVisible) {
+    return (gameModalText() || '').trim();
+  }
+  // otherwise read the most relevant headline + intro
+  const headline = document.querySelector('#welcomeUser')?.textContent || '';
+  const hero = document.querySelector('.hero-panel')?.innerText || '';
+  return (headline + '\n' + hero).trim();
+}
+
+function gameModalText() {
+  const title = gameModalTitle?.textContent || '';
+  const meta = gameModalMeta?.textContent || '';
+  const content = gameContent?.innerText || '';
+  return `${title}\n${meta}\n${content}`;
+}
+
+function stopSpeaking() {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    _ttsUtterance = null;
+  }
+  if (ttsBtn) {
+    ttsBtn.setAttribute('aria-pressed', 'false');
+    ttsBtn.textContent = '🔊';
+  }
+}
+
+function speakText(text) {
+  if (!text || !window.speechSynthesis) return;
+  stopSpeaking();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'pt-BR';
+  utterance.rate = 0.95;
+  utterance.pitch = 1;
+
+  // try to pick a Portuguese voice if available
+  const voices = window.speechSynthesis.getVoices();
+  const ptVoice = voices.find(v => /pt(-|_)?BR|Portuguese/i.test(v.lang + ' ' + v.name));
+  if (ptVoice) utterance.voice = ptVoice;
+
+  utterance.onend = () => stopSpeaking();
+  utterance.onerror = () => stopSpeaking();
+
+  _ttsUtterance = utterance;
+  window.speechSynthesis.speak(utterance);
+  if (ttsBtn) {
+    ttsBtn.setAttribute('aria-pressed', 'true');
+    ttsBtn.textContent = '⏸️';
+  }
 }
 
 function getAuthHeaders() {
@@ -451,6 +512,7 @@ function closeGame() {
   gameModal.classList.add('hidden');
   state.currentGameSession = null;
   state.activeGame = null;
+  stopSpeaking();
 }
 
 async function init() {
@@ -482,6 +544,18 @@ async function init() {
   gameModal.addEventListener('click', (event) => {
     if (event.target === gameModal) closeGame();
   });
+
+  if (ttsBtn) {
+    ttsBtn.addEventListener('click', () => {
+      if (window.speechSynthesis && window.speechSynthesis.speaking) {
+        stopSpeaking();
+        return;
+      }
+      const text = _getTextToSpeak();
+      if (!text) return;
+      speakText(text);
+    });
+  }
 
   if (state.token) {
     try {
