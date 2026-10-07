@@ -1,4 +1,8 @@
-const API_BASE = '/api';
+// Laragon serves static pages on port 80 while the Express API uses port 3000.
+const apiOrigin = window.location.protocol === 'http:' && !window.location.port
+  ? `${window.location.protocol}//${window.location.hostname}:3000`
+  : window.location.origin;
+const API_BASE = `${apiOrigin}/api`;
 const state = {
   token: localStorage.getItem('expedicao-token') || '',
   user: null,
@@ -229,13 +233,21 @@ function getAuthHeaders() {
 }
 
 async function apiFetch(path, options = {}) {
-  const response = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      ...(state.token ? { Authorization: `Bearer ${state.token}` } : {})
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        ...(state.token ? { Authorization: `Bearer ${state.token}` } : {})
+      }
+    });
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(`Não foi possível conectar ao servidor da API em ${apiOrigin}. Inicie o backend com "npm start".`);
     }
-  });
+    throw error;
+  }
 
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
