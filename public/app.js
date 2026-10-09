@@ -1,5 +1,5 @@
-// Laragon serves static pages on port 80 while the Express API uses port 3000.
-const apiOrigin = window.location.protocol === 'http:' && !window.location.port
+// Laragon and VS Code Live Server use their own ports; the Express API uses port 3000.
+const apiOrigin = window.location.protocol === 'http:' && window.location.port !== '3000'
   ? `${window.location.protocol}//${window.location.hostname}:3000`
   : window.location.origin;
 const API_BASE = `${apiOrigin}/api`;
@@ -249,10 +249,11 @@ async function apiFetch(path, options = {}) {
     throw error;
   }
 
-  const payload = await response.json().catch(() => ({}));
+  const payload = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new Error(payload.message || 'Erro ao carregar dados.');
+    throw new Error(payload?.message || `Erro ao carregar dados (HTTP ${response.status}).`);
   }
+  if (!payload) throw new Error('A API retornou uma resposta inválida.');
   return payload;
 }
 
