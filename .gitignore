@@ -1,5 +1,6 @@
 node_modules/
 data/
 .env
+api/config.php
 .DS_Store
 npm-debug.log*

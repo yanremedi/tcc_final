@@ -1,5 +1,6 @@
-// Laragon and VS Code Live Server use their own ports; the Express API uses port 3000.
-const apiOrigin = window.location.protocol === 'http:' && window.location.port !== '3000'
+// Local development uses Express on port 3000; production serves PHP at the same origin.
+const isLocalDevelopment = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const apiOrigin = isLocalDevelopment && window.location.protocol === 'http:' && window.location.port !== '3000'
   ? `${window.location.protocol}//${window.location.hostname}:3000`
   : window.location.origin;
 const API_BASE = `${apiOrigin}/api`;

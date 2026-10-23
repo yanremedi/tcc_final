@@ -1,8 +1,4 @@
-CREATE DATABASE IF NOT EXISTS expedicao_brasil
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE expedicao_brasil;
+-- No InfinityFree, selecione o banco criado no painel antes de importar este arquivo.
 
 CREATE TABLE IF NOT EXISTS users (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,

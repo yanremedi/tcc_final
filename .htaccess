@@ -1,0 +1,9 @@
+RewriteEngine On
+
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteRule ^api/index\.php$ - [L]
+RewriteRule ^api(?:/.*)?$ api/index.php [QSA,L]
+RewriteRule ^public/ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.+)$ public/$1 [L]
+RewriteRule ^$ public/index.html [L]
